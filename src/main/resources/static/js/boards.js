@@ -2,6 +2,16 @@ $("#btnDelete").click(() => {
 	deleteById();
 });
 
+$("#btnSave").click(() => {
+	save();
+	//saveTest();
+});
+
+//updateForm
+$("#btnUpdate").click(() => {
+	update();
+});
+
 // 하트 아이콘을 클릭했을때의 로직
 $("#iconLove").click(() => {
 	let isLovedState = $("#iconLove").hasClass("fa-solid");
@@ -12,15 +22,6 @@ $("#iconLove").click(() => {
 	}
 });
 
-$("#btnSave").click(() => {
-	save();
-	//saveTest();
-});
-
-//updateForm
-$("#btnUpdate").click(() => {
-	update();
-});
 
 function deleteById() {
 	let id = $("#id").val();
@@ -90,27 +91,6 @@ function renderCancelLoves() {
 	$("#iconLove").addClass("fa-regular");
 }
 
-
-function save() {
-	let data = {
-		title: $("#title").val(),
-		content: $("#content").val()
-	};
-
-	$.ajax("/s/api/boards", {
-		type: "POST",
-		dataType: "json", // 응답 데이터
-		data: JSON.stringify(data), // http body에 들고갈 요청 데이터
-		headers: { // http header에 들고갈 요청 데이터
-			"Content-Type": "application/json"
-		}
-	}).done((res) => {
-		if (res.code == 1) {
-			location.href = "/";
-		}
-	});
-}
-
 function update() {
 	let data = {
 		title: $("#title").val(),
@@ -135,5 +115,26 @@ function update() {
 		}
 	});
 }
+function save() {
+	let data = {
+		title: $("#title").val(),
+		content: $("#content").val()
+	};
+
+	$.ajax("/s/api/boards", {
+		type: "POST",
+		dataType: "json", // 응답 데이터
+		data: JSON.stringify(data), // http body에 들고갈 요청 데이터
+		headers: { // http header에 들고갈 요청 데이터
+			"Content-Type": "application/json"
+		}
+	}).done((res) => {
+		if (res.code == 1) {
+			location.href = "/";
+		}
+	});
+}
+
+
 
 
