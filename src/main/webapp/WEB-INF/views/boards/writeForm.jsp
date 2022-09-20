@@ -1,11 +1,13 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 <%@ include file="../layout/header.jsp"%>
 
 <div class="container">
 	<form>
 		<div class="mb-3 mt-3">
-			<input id="title" type="text" class="form-control" placeholder="Enter title">
+			<input id="title" type="text" class="form-control"
+				placeholder="Enter title">
 		</div>
 		<div class="mb-3">
 			<textarea id="content" class="form-control" rows="8"></textarea>
@@ -14,36 +16,10 @@
 	</form>
 </div>
 
-<script>
-	$("#btnSave").click(()=>{
-		save();
-		//saveTest();
-	});
-	
-
-	function save(){
-		let data = {
-				title: $("#title").val(),
-				content: $("#content").val()
-			};
-
-			$.ajax("/boards", {
-				type: "POST",
-				dataType: "json", // 응답 데이터
-				data: JSON.stringify(data), // http body에 들고갈 요청 데이터
-				headers: { // http header에 들고갈 요청 데이터
-					"Content-Type": "application/json"
-				}
-			}).done((res) => {
-				if (res.code == 1) {
-					location.href = "/";
-				}
-			});
-	}
-	
-</script>
+<script src="/js/boards.js"></script>
 
 <script>
+	//summernote/ 게시글작성 모델
 	$('#content').summernote({
 		height : 400
 	});
