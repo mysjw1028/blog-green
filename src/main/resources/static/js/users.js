@@ -21,11 +21,39 @@ $("#btnUpdate").click(() => {
 	update();
 });
 
+
 function join() {
 	if (isUsernameSameCheck == false) {
 		alert("유저네임 중복 체크를 진행해주세요");
 		return;
 	}
+
+	if (koreanCheck() == true) {
+		alert("유저네임에 한글이 있으면 안됩니다.");
+		return;
+	}
+
+
+	if (engCheck() == true) {
+		alert("대문자 하나 이상 넣어주세요")
+		return;
+	}
+
+
+	if (engCheck() == true) {
+		alert("대문자 하나 이상 넣어주세요")
+		return;
+	}
+
+	if (pwCheck(passwordSame) == false) {
+		alert("비밀번호가 다릅니다")
+		return;
+	}
+	if (emailCheck() == false) {
+		alert("이메일 형식을 확인해주세요")
+		return;
+	}
+
 
 	let data = {
 		username: $("#username").val(),
@@ -43,6 +71,9 @@ function join() {
 	}).done((res) => {
 		if (res.code == 1) {
 			location.href = "/loginForm";
+		} else {
+			alert(res.msg);
+			history.back();
 		}
 	});
 }
@@ -131,3 +162,43 @@ function update() {
 		}
 	});
 }
+
+function koreanCheck() {
+	let username = $("#username").val();
+	var korRule = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+	if (korRule.test(username)) {
+		return true;
+	} else {
+		return false;
+	}
+}//회원가입 조인
+
+function engCheck() {//대문자 1개 
+	let username = $("#username").val();
+	let egRule = /[A-Z]/;
+	if (!egRule.test(username)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function pwCheck() {
+	let password = $("#password").val();
+	let passwordSame = $("#passwordSame").val();
+	if (password != passwordSame) {
+		return false;
+	} else {
+		return true;
+	}
+}
+function emailCheck() {
+	let email = $("#email").val();
+	let emailRule = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+	if (emailRule.test(email)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
