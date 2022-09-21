@@ -11,6 +11,7 @@ import site.metacoding.red.domain.loves.Loves;
 import site.metacoding.red.domain.loves.LovesDao;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.domain.users.UsersDao;
+import site.metacoding.red.handler.ex.MyException;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
 import site.metacoding.red.web.dto.request.boards.WriteDto;
 import site.metacoding.red.web.dto.response.boards.DetailDto;
@@ -24,27 +25,27 @@ public class BoardsService {
 	private final BoardsDao boardsDao;
 	private final LovesDao lovesDao;
 
-	public void 좋아요취소(Integer lovesId) {//트래잭션 발동 -> 같은게 묶이게 할려고
+	public void 좋아요취소(Integer lovesId) {// 트래잭션 발동 -> 같은게 묶이게 할려고
 		lovesDao.deleteById(lovesId);
 	}
-	
+
 	public Loves 좋아요(Loves loves) {
-		lovesDao.insert(loves);//id, usersId, boardsId 완벽하게 동기화 할려면 SELECT를 해서 해야한다,
+		lovesDao.insert(loves);// id, usersId, boardsId 완벽하게 동기화 할려면 SELECT를 해서 해야한다,
 		return loves;
 	}
-	
+
 	public PagingDto 게시글목록보기(Integer page, String keyword) {
 		if (page == null) {
 			page = 0;
 		}
 		int startNum = page * PagingDto.ROW;
 		System.out.println("==========");
-		System.out.println("keyword : "+keyword);
+		System.out.println("keyword : " + keyword);
 		System.out.println("==========");
-		
+
 		List<MainDto> boardsList = boardsDao.findAll(startNum, keyword, PagingDto.ROW);
 		PagingDto pagingDto = boardsDao.paging(page, keyword, PagingDto.ROW);
-		
+
 		if (boardsList.size() == 0)
 			pagingDto.setNotResult(true);
 		pagingDto.makeBlockInfo(keyword);
@@ -56,19 +57,26 @@ public class BoardsService {
 	public DetailDto 게시글상세보기(Integer id, Integer principalId) {
 		return boardsDao.findByDetail(id, principalId);
 	}
-	
+
 	public Boards 게시글수정화면데이터가져오기(Integer id) {
-		return boardsDao.findById(id);
+		Boards boards= boardsDao.findById(id);
+		
+		if(boards == null) {
+			throw new MyException(id + "의 게시글을 찾을 수 없습니다.");
+		 }//데이터를 응답하게되서 이상하게됨->Exception 종류를 나눔
+		
+		return null;
 	}
 
 	public void 게시글수정하기(Integer id, UpdateDto updateDto) {
 		// 1. 영속화
 		Boards boardsPS = boardsDao.findById(id);
-		if(boardsPS == null) {
-			// 이 부분은 나중에 처리!! (exception 처리하는 법 따로 배울 예정)
-		}
 
-		// 2. 변경
+		if (boardsPS == null) {
+			throw new RuntimeException(id + "의 게시글을 찾을수없습니다.");
+		} // -> 복기하는거 최초호출한 부분으로 들어가짐 -> return도 필요가 없다 catch 는 디스패텨 서블릿이 발동됨
+			// RuntimeException Exception throwable
+			// 2. 변경
 		boardsPS.update(updateDto);
 
 		// 3. 수행
@@ -77,7 +85,7 @@ public class BoardsService {
 
 	public void 게시글삭제하기(Integer id) {
 		Boards boardsPS = boardsDao.findById(id);
-		if(boardsPS == null) {
+		if (boardsPS == null) {
 			// 이 부분은 나중에 처리!! (exception 처리하는 법 따로 배울 예정)
 		}
 		boardsDao.deleteById(id);

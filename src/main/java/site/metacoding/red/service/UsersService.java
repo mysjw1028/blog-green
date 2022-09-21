@@ -21,7 +21,7 @@ public class UsersService {
 	public void 회원가입(JoinDto joinDto) {
 		Users users = joinDto.toEntity();
 		usersDao.insert(users);
-	}
+	}//컨트롤러가 일 안함
 	
 	public Users 로그인(LoginDto loginDto) {
 		Users usersPS = usersDao.findByUsername(loginDto.getUsername());
